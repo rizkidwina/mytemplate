@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 from pydantic import ValidationError
 
 from features.users.schemas import UserProfileCreate, UserProfileUpdate
@@ -38,16 +38,12 @@ def test_create_profile_rejects_long_phone_number() -> None:
 
 def test_update_profile_with_partial_data() -> None:
     data = UserProfileUpdate(display_name="Updated User")
-    assert data.model_dump(exclude_unset=True) == {
-        "display_name": "Updated User"
-    }
+    assert data.model_dump(exclude_unset=True) == {"display_name": "Updated User"}
 
 
 def test_update_profile_can_clear_phone_number() -> None:
     data = UserProfileUpdate(phone_number=None)
-    assert data.model_dump(exclude_unset=True) == {
-        "phone_number": None
-    }
+    assert data.model_dump(exclude_unset=True) == {"phone_number": None}
 
 
 def test_update_profile_empty_payload() -> None:

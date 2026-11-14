@@ -1,4 +1,4 @@
-﻿import os
+import os
 from collections.abc import Generator
 
 import pytest
@@ -12,7 +12,6 @@ from db.base import Base
 from features.products import models as product_models  # noqa: F401
 from features.users import models as user_models  # noqa: F401
 from main import app
-
 
 TEST_AUTH_USER_ID = "test-auth-user-001"
 
@@ -66,9 +65,7 @@ def client(db_session: Session) -> Generator[TestClient, None, None]:
         return TEST_AUTH_USER_ID
 
     app.dependency_overrides[get_db] = override_get_db
-    app.dependency_overrides[get_current_user_id] = (
-        override_get_current_user_id
-    )
+    app.dependency_overrides[get_current_user_id] = override_get_current_user_id
 
     try:
         with TestClient(app) as test_client:

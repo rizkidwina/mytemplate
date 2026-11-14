@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 from sqlalchemy.orm import Session
 
 from core.exceptions import AppException

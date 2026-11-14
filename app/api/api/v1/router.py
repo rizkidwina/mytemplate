@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter
 
 from features.users.endpoints import router as users_router

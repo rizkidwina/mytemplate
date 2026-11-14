@@ -1,4 +1,4 @@
-﻿def test_create_my_profile(client) -> None:
+def test_create_my_profile(client) -> None:
     response = client.post(
         "/api/v1/users/me/profile",
         json={
