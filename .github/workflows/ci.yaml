@@ -1,0 +1,66 @@
+name: FastAPI Backend CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      APP_NAME: FastAPI Backend Starter
+      APP_ENV: development
+      APP_VERSION: 0.1.0
+      DEBUG: "true"
+
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: ci_test_password
+      POSTGRES_DB: app_db
+
+      DATABASE_URL: postgresql+psycopg://app:ci_test_password@db:5432/app_db
+      TEST_DATABASE_URL: postgresql+psycopg://app:ci_test_password@db:5432/app_test
+
+      AUTH_JWKS_URL: http://localhost:3000/api/auth/jwks
+      AUTH_ISSUER: http://localhost:3000
+      AUTH_AUDIENCE: http://localhost:8000
+      AUTH_JWT_ALGORITHM: EdDSA
+
+      CORS_ORIGINS: http://localhost:3000
+      TZ: Asia/Jakarta
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Start PostgreSQL
+        run: docker compose up -d db
+
+      - name: Wait for PostgreSQL and create test database
+        shell: bash
+        run: |
+          until docker compose exec -T db pg_isready -U app -d app_db; do
+            sleep 2
+          done
+
+          docker compose exec -T db psql -U app -d postgres \
+            -c "CREATE DATABASE app_test;"
+
+      - name: Ruff lint
+        run: docker compose run --build --rm api ruff check .
+
+      - name: Ruff format check
+        run: docker compose run --rm api ruff format --check .
+
+      - name: Pytest with coverage
+        run: docker compose run --rm api pytest -v
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-coverage
+          path: app/api/coverage.xml
+          if-no-files-found: ignore

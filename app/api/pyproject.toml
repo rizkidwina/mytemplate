@@ -1,0 +1,128 @@
+
+[project]
+name = "fastapi-backend-starter"
+version = "0.1.0"
+description = "Production-minded FastAPI backend starter template"
+requires-python = ">=3.12,<3.14"
+
+dependencies = [
+    # ==========================================
+    # API FRAMEWORK
+    # ==========================================
+    "fastapi[standard]>=0.120.0",
+
+    # ==========================================
+    # PYDANTIC & CONFIGURATION
+    # ==========================================
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.7.0",
+    "python-dotenv>=1.0.1",
+    "email-validator>=2.2.0",
+
+    # ==========================================
+    # DATABASE
+    # ==========================================
+    "sqlalchemy>=2.0.0",
+    "psycopg[binary]>=3.2.0",
+    "alembic>=1.14.0",
+
+    # ==========================================
+    # AUTHENTICATION & SECURITY UTILITIES
+    # ==========================================
+    "PyJWT[crypto]>=2.10.0",
+    "pwdlib[argon2]>=0.2.1",
+    "python-multipart>=0.0.20",
+
+    # ==========================================
+    # UTILITIES
+    # ==========================================
+    "tenacity>=9.0.0",
+]
+
+[dependency-groups]
+dev = [
+    # Testing
+    "pytest>=8.3.0",
+    "pytest-cov>=6.0.0",
+    "pytest-asyncio>=0.25.0",
+    "httpx>=0.28.0",
+    "asgi-lifespan>=2.1.0",
+
+    # Code Quality
+    "ruff>=0.9.0",
+    "mypy>=1.14.0",
+]
+
+# ==========================================
+# UV
+# ==========================================
+
+[tool.uv]
+package = false
+
+# ==========================================
+# PYTEST
+# ==========================================
+
+[tool.pytest.ini_options]
+testpaths = ["../../tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+pythonpath = ["."]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+    "--cov=.",
+    "--cov-report=term-missing",
+]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+[tool.coverage.run]
+branch = true
+source = ["."]
+omit = [
+    "tests/*",
+    "*/__init__.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 80
+
+# ==========================================
+# RUFF
+# ==========================================
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["."]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+    "UP",
+    "B",
+    "SIM",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# ==========================================
+# MYPY
+# ==========================================
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+asyncio_default_fixture_loop_scope = "function"

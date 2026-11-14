@@ -1,0 +1,37 @@
+services:
+  api:
+    build:
+      target: development
+
+    environment:
+      APP_ENV: development
+      DEBUG: "true"
+      AUTH_JWKS_URL: ${AUTH_JWKS_URL:-http://localhost:3000/api/auth/jwks}
+      AUTH_ISSUER: ${AUTH_ISSUER:-http://localhost:3000}
+      AUTH_AUDIENCE: ${AUTH_AUDIENCE:-http://localhost:8000}
+      AUTH_JWT_ALGORITHM: ${AUTH_JWT_ALGORITHM:-EdDSA}
+      TEST_DATABASE_URL: ${TEST_DATABASE_URL:-}
+
+    volumes:
+      - ./app/api:/app
+      - ./tests:/tests
+
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+
+    command:
+      - fastapi
+      - dev
+      - main.py
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+
+    restart: unless-stopped
+
+  db:
+    ports:
+      - "${POSTGRES_EXTERNAL_PORT:-5433}:5432"
+
+    restart: unless-stopped
